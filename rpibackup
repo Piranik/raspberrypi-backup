@@ -1,10 +1,11 @@
 #!/bin/bash
-# Backup OS to the USB Hard Disk Drive
+# Backup OS to a mount point - SMB, NFS, USB etc
 
 # Create a filename with datestamp for our current backup (without .img suffix)
 ipaddr="`hostname -I`"
 ipaddr=$(echo $ipaddr | sed 's/ *$//')
 currdate="`date +%Y-%m-%d.%s`"
+# Generate date of 5 days ago for deleting of old images later in the script
 olddate="`date --date="5 days ago" +%Y-%m-%d`"
 stamp="$ipaddr-$currdate"
 oldstamp="$ipaddr-$olddate"
