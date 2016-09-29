@@ -1,0 +1,39 @@
+#!/bin/bash
+# Backup OS to the USB Hard Disk Drive
+date
+# Create a filename with datestamp for our current backup (without .img suffix)
+ipaddr="`hostname -I`"
+ipaddr=$(echo $ipaddr | sed 's/ *$//')
+currdate="`date +%Y-%m-%d.%s`"
+olddate="`date --date="5 days ago" +%Y-%m-%d`"
+stamp="$ipaddr-$currdate"
+oldstamp="$ipaddr-$olddate"
+
+# Location of the final image
+ofile="/mnt/server/rpibackup/rpi_$stamp"
+
+# Create final filename, with suffix
+ofilefinal=$ofile.img.gz
+
+# Begin the backup process, should take about 1 hour from 8Gb SD card to HDD
+
+sudo dd if="/dev/mmcblk0" bs=1M | gzip > $ofile
+
+# Collect result of backup procedure
+result=$?
+
+# If command has completed successfully, delete previous backups and exit
+if [ $result = 0 ]; then
+#   echo "Successful backup, previous backup files will be deleted."
+#   rm -f /mnt/usb/backup_*.img
+#   rm -f /mnt/server/rpibackup/*$oldstamp.*
+   mv $ofile $ofilefinal
+date
+   exit 0
+# Else remove attempted backup file
+else
+#   echo "Backup failed! Previous backup files untouched."
+#   echo "Please check there is sufficient space on the HDD."
+   rm -f $ofile
+   exit 1
+fi
